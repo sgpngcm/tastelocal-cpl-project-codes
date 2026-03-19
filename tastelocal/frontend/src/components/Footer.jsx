@@ -3,14 +3,20 @@ import { FiMail, FiPhone, FiMapPin, FiInstagram, FiFacebook, FiTwitter } from 'r
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-gray-300">
+    <footer className="bg-gray-900 text-gray-300" aria-labelledby="footer-heading">
+      <h2 id="footer-heading" className="sr-only">Site footer</h2>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
           <div>
             <Link to="/" className="mb-4 flex items-center gap-3">
               <img
-                src="/TasteLocal_logo.png"
-                alt="TasteLocal Logo"
+                src="/TasteLocal_logo_small.webp"
+                alt="TasteLocal"
+                width="176"
+                height="44"
+                loading="eager"
+                decoding="async"
                 className="h-11 w-auto object-contain"
               />
               <span className="font-display text-xl font-bold text-white">TasteLocal</span>
@@ -24,97 +30,59 @@ export default function Footer() {
             <div className="flex gap-3">
               <a
                 href="#"
+                aria-label="Facebook"
+                title="Facebook"
                 className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-800 transition-colors hover:bg-primary-600"
               >
-                <FiFacebook size={16} />
+                <FiFacebook size={16} aria-hidden="true" />
               </a>
               <a
                 href="#"
+                aria-label="Instagram"
+                title="Instagram"
                 className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-800 transition-colors hover:bg-primary-600"
               >
-                <FiInstagram size={16} />
+                <FiInstagram size={16} aria-hidden="true" />
               </a>
               <a
                 href="#"
+                aria-label="Twitter"
+                title="Twitter"
                 className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-800 transition-colors hover:bg-primary-600"
               >
-                <FiTwitter size={16} />
+                <FiTwitter size={16} aria-hidden="true" />
               </a>
             </div>
           </div>
 
           <div>
-            <h4 className="mb-4 font-display text-lg font-semibold text-white">Explore</h4>
+            <h3 className="mb-4 font-display text-lg font-semibold text-white">Explore</h3>
             <ul className="space-y-2 text-sm">
-              <li>
-                <Link to="/experiences" className="transition-colors hover:text-primary-400">
-                  Food Experiences
-                </Link>
-              </li>
-              <li>
-                <Link to="/vendors" className="transition-colors hover:text-primary-400">
-                  Local Vendors
-                </Link>
-              </li>
-              <li>
-                <Link to="/map" className="transition-colors hover:text-primary-400">
-                  Food Map
-                </Link>
-              </li>
-              <li>
-                <Link to="/blog" className="transition-colors hover:text-primary-400">
-                  Food Blog
-                </Link>
-              </li>
-              <li>
-                <Link to="/register" className="transition-colors hover:text-primary-400">
-                  Become a Vendor
-                </Link>
-              </li>
+              <li><Link to="/experiences" className="transition-colors hover:text-primary-400">Food Experiences</Link></li>
+              <li><Link to="/vendors" className="transition-colors hover:text-primary-400">Local Vendors</Link></li>
+              <li><Link to="/map" className="transition-colors hover:text-primary-400">Food Map</Link></li>
+              <li><Link to="/blog" className="transition-colors hover:text-primary-400">Food Blog</Link></li>
+              <li><Link to="/register" className="transition-colors hover:text-primary-400">Become a Vendor</Link></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="mb-4 font-display text-lg font-semibold text-white">Company</h4>
+            <h3 className="mb-4 font-display text-lg font-semibold text-white">Company</h3>
             <ul className="space-y-2 text-sm">
-              <li>
-                <Link to="/page/about" className="transition-colors hover:text-primary-400">
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link to="/page/contact" className="transition-colors hover:text-primary-400">
-                  Contact Us
-                </Link>
-              </li>
-              <li>
-                <Link to="/page/privacy" className="transition-colors hover:text-primary-400">
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link to="/page/terms" className="transition-colors hover:text-primary-400">
-                  Terms of Service
-                </Link>
-              </li>
-              <li>
-                <Link to="/page/faq" className="transition-colors hover:text-primary-400">
-                  FAQ
-                </Link>
-              </li>
-              <li>
-                <Link to="/page/sitemap" className="transition-colors hover:text-primary-400">
-                  Site Map
-                </Link>
-              </li>
+              <li><Link to="/page/about" className="transition-colors hover:text-primary-400">About Us</Link></li>
+              <li><Link to="/page/contact" className="transition-colors hover:text-primary-400">Contact Us</Link></li>
+              <li><Link to="/page/privacy" className="transition-colors hover:text-primary-400">Privacy Policy</Link></li>
+              <li><Link to="/page/terms" className="transition-colors hover:text-primary-400">Terms of Service</Link></li>
+              <li><Link to="/page/faq" className="transition-colors hover:text-primary-400">FAQ</Link></li>
+              <li><Link to="/page/sitemap" className="transition-colors hover:text-primary-400">Site Map</Link></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="mb-4 font-display text-lg font-semibold text-white">Contact</h4>
+            <h3 className="mb-4 font-display text-lg font-semibold text-white">Contact</h3>
             <ul className="space-y-3 text-sm">
               <li className="flex items-start gap-2">
-                <FiMapPin size={16} className="mt-0.5 shrink-0 text-primary-400" />
+                <FiMapPin size={16} className="mt-0.5 shrink-0 text-primary-400" aria-hidden="true" />
                 <span>
                   1 Orchard Road, #10-01
                   <br />
@@ -122,13 +90,13 @@ export default function Footer() {
                 </span>
               </li>
               <li className="flex items-center gap-2">
-                <FiMail size={16} className="shrink-0 text-primary-400" />
+                <FiMail size={16} className="shrink-0 text-primary-400" aria-hidden="true" />
                 <a href="mailto:tastelocal2@gmail.com" className="hover:text-primary-400">
                   tastelocal2@gmail.com
                 </a>
               </li>
               <li className="flex items-center gap-2">
-                <FiPhone size={16} className="shrink-0 text-primary-400" />
+                <FiPhone size={16} className="shrink-0 text-primary-400" aria-hidden="true" />
                 <span>+65 6100 8888</span>
               </li>
             </ul>

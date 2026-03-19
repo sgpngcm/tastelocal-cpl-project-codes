@@ -3,6 +3,7 @@ from rest_framework import generics, status, permissions
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from rest_framework.exceptions import NotFound
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db import models
 from .models import VendorProfile, VendorPhoto
@@ -70,13 +71,20 @@ class VendorCreateView(generics.CreateAPIView):
 
 
 class VendorUpdateView(generics.RetrieveUpdateAPIView):
-    """Update vendor profile (owner only)."""
-    serializer_class = VendorProfileCreateSerializer
+    """Retrieve/update vendor profile (owner only)."""
     permission_classes = [permissions.IsAuthenticated, IsVendorOwner]
     parser_classes = [MultiPartParser, FormParser, JSONParser]
 
+    def get_serializer_class(self):
+        if self.request.method in permissions.SAFE_METHODS:
+            return VendorProfileSerializer
+        return VendorProfileCreateSerializer
+
     def get_object(self):
-        return self.request.user.vendor_profile
+        try:
+            return self.request.user.vendor_profile
+        except VendorProfile.DoesNotExist:
+            raise NotFound('Vendor profile not found. Please create your profile first.')
 
 
 class VendorPhotoUploadView(generics.CreateAPIView):
@@ -119,7 +127,6 @@ def cuisine_types(request):
     return Response(VendorProfile.CUISINE_CHOICES)
 
 
-# Admin vendor management
 class AdminVendorListView(generics.ListAPIView):
     """Admin: list all vendors including unapproved."""
     serializer_class = VendorProfileSerializer

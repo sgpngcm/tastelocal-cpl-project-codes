@@ -7,11 +7,17 @@ const escapeXml = (value = '') => value
   .replace(/"/g, '&quot;')
   .replace(/'/g, '&apos;');
 
-const createSvgDataUri = ({ title, subtitle = '', palette = ['#EE7A1B', '#B94810'], badge = 'TasteLocal' }) => {
+const createSvgDataUri = ({
+  title,
+  subtitle = '',
+  palette = ['#EE7A1B', '#B94810'],
+  badge = 'TasteLocal',
+}) => {
   const [start, end] = palette;
   const safeTitle = escapeXml(title || 'TasteLocal');
   const safeSubtitle = escapeXml(subtitle || 'Singapore food experiences');
   const safeBadge = escapeXml(badge);
+
   const svg = `
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800">
       <defs>
@@ -31,7 +37,21 @@ const createSvgDataUri = ({ title, subtitle = '', palette = ['#EE7A1B', '#B94810
       <path d="M72 500 C 220 560, 340 540, 500 600" stroke="rgba(255,255,255,0.18)" stroke-width="12" fill="none" stroke-linecap="round"/>
     </svg>
   `;
+
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+};
+
+const splitUrl = (url = '') => {
+  const [pathPart, queryPart = ''] = String(url).split('?');
+  return {
+    path: pathPart,
+    query: queryPart ? `?${queryPart}` : '',
+  };
+};
+
+const replaceExt = (path, newExt) => {
+  if (!path) return path;
+  return path.replace(/\.(png|jpe?g|webp|avif)$/i, newExt);
 };
 
 export const resolveMediaUrl = (source) => {
@@ -41,6 +61,33 @@ export const resolveMediaUrl = (source) => {
   }
   const normalized = source.startsWith('/') ? source : `/${source}`;
   return API_BASE ? `${API_BASE}${normalized}` : normalized;
+};
+
+export const buildOptimizedImageCandidates = (source) => {
+  if (!source) return [];
+
+  if (/^(https?:)?\/\//.test(source) || source.startsWith('data:') || source.startsWith('blob:')) {
+    return [source];
+  }
+
+  const { path, query } = splitUrl(source);
+
+  if (!/\.(png|jpe?g|webp|avif)$/i.test(path)) {
+    return [resolveMediaUrl(source)];
+  }
+
+  const avif = `${replaceExt(path, '.avif')}${query}`;
+  const webp = `${replaceExt(path, '.webp')}${query}`;
+  const original = `${path}${query}`;
+
+  return Array.from(
+    new Set([avif, webp, original].map((item) => resolveMediaUrl(item)))
+  );
+};
+
+export const resolveOptimizedMediaUrl = (source) => {
+  const candidates = buildOptimizedImageCandidates(source);
+  return candidates[0] || '';
 };
 
 export const getAvatarPlaceholder = (name = 'TasteLocal User') => {
@@ -67,23 +114,35 @@ export const getAvatarPlaceholder = (name = 'TasteLocal User') => {
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 };
 
-export const getExperienceFallback = (experience = {}) => createSvgDataUri({
-  title: experience.title || 'Food Experience',
-  subtitle: `${experience.vendor_name || 'TasteLocal'} • ${experience.category_display || 'Singapore'}`,
-  badge: 'Curated Experience',
-  palette: ['#EE7A1B', '#933A15'],
-});
+export const getExperienceFallback = (experience = {}) =>
+  createSvgDataUri({
+    title: experience.title || 'Food Experience',
+    subtitle: `${experience.vendor_name || 'TasteLocal'} • ${experience.category_display || 'Singapore'}`,
+    badge: 'Curated Experience',
+    palette: ['#EE7A1B', '#933A15'],
+  });
 
-export const getVendorFallback = (vendor = {}) => createSvgDataUri({
-  title: vendor.business_name || 'Local Vendor',
-  subtitle: vendor.cuisine_type_display || 'Singapore culinary host',
-  badge: 'Trusted Vendor',
-  palette: ['#16A34A', '#14532D'],
-});
+export const getVendorFallback = (vendor = {}) =>
+  createSvgDataUri({
+    title: vendor.business_name || 'Local Vendor',
+    subtitle: vendor.cuisine_type_display || 'Singapore culinary host',
+    badge: 'Trusted Vendor',
+    palette: ['#16A34A', '#14532D'],
+  });
 
-export const getBlogFallback = (post = {}) => createSvgDataUri({
-  title: post.title || 'TasteLocal Stories',
-  subtitle: post.category?.name || 'Guides, culture, and local tips',
-  badge: 'TasteLocal Journal',
-  palette: ['#B94810', '#773114'],
-});
+export const getBlogFallback = (post = {}) =>
+  createSvgDataUri({
+    title: post.title || 'TasteLocal Stories',
+    subtitle: post.category?.name || 'Guides, culture, and local tips',
+    badge: 'TasteLocal Journal',
+    palette: ['#B94810', '#773114'],
+  });
+
+export const getImageSources = (source) => {
+  const candidates = buildOptimizedImageCandidates(source);
+  return {
+    avif: candidates.find((item) => item.toLowerCase().includes('.avif')) || '',
+    webp: candidates.find((item) => item.toLowerCase().includes('.webp')) || '',
+    fallback: candidates[candidates.length - 1] || '',
+  };
+};
